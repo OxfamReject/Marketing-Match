@@ -1,0 +1,64 @@
+//
+//  CardCollectionViewCell.swift
+//  Marketing Match
+//
+//  Created by Jo Thorpe on 01/05/2018.
+//  Copyright © 2018 Oxfam Reject. All rights reserved.
+//
+
+import UIKit
+
+class CardCollectionViewCell: UICollectionViewCell {
+    @IBOutlet weak var frontImageView: UIImageView!
+    @IBOutlet weak var backImageView: UIImageView!
+    var card:Card?
+    
+    func setCard(_ card:Card){
+        //keep track of card passed in
+        self.card = card
+        
+        if card.isMatched == true {
+            //make invisible when reusing cells if matched
+            backImageView.alpha = 0
+            frontImageView.alpha = 0
+            return
+        } else {
+            //if it hasnt make it visible
+            backImageView.alpha = 1
+            frontImageView.alpha = 1
+        }
+        frontImageView.image = UIImage(named: card.imageName)
+        
+        //determine if the card is in a flipped up state
+        //this is so they aren't randomly shown
+        if card.isFlipped == true {
+            //front view on top
+            UIView.transition(from: backImageView, to: frontImageView, duration: 0, options: [.transitionFlipFromLeft,.showHideTransitionViews], completion: nil)
+        } else {
+            //back image on top
+            UIView.transition(from: frontImageView, to: backImageView, duration: 0, options: [.transitionFlipFromLeft,.showHideTransitionViews], completion: nil)
+        }
+    }
+    func flip(){
+        UIView.transition(from: backImageView, to: frontImageView, duration: 0.3, options: [.transitionFlipFromLeft,.showHideTransitionViews], completion: nil)
+    }
+    func flipBack(){
+        //to add delay so you can see match if
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.8) {
+            UIView.transition(from: self.frontImageView, to: self.backImageView, duration: 0.3, options: [.transitionFlipFromRight,.showHideTransitionViews], completion: nil)
+        }
+    }
+    
+    func remove(){
+        //removes both imageviews from being visible
+        backImageView.alpha = 0
+        //alpha is opacity
+        UIView.animate(withDuration: 0.3, delay: 0.5, options: .curveEaseOut, animations: {
+            self.frontImageView.alpha = 0
+        }, completion: nil)
+        
+        
+    }
+    
+    
+}
